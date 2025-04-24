@@ -3,45 +3,51 @@
 
 <head>
     <meta charset="UTF-8">
+    <link href="CSS/style.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
     <title>Firebase Web</title>
 </head>
 
 <body>
+    <div>
+        <h1>Main page:</h1>
+        <a href="index.html">Main</a>
+    </div>
     <h1>Firestore Query Tester</h1>
-
-    <div>
-        <h2>Where Queries (Multiple)</h2>
-        <div id="filtersContainer">
-            <div class="filter">
-                <input type="text" placeholder="Column" class="filterColumn">
-                <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
-                <input type="text" placeholder="Value" class="filterValue">
-            </div>
-        </div>
-        <button id="addFilterBtn">Add Filter</button><br><br>
-        <button id="multiWhereQueryBtn">Run Combined Query</button>
+    <div id="filterSection">
+        <h2>Queries</h2>
+        <h1>Choose the option </h1>
+        <select name="Choose_The_Option" id="option1">
+            <option value="cell">Cell Number</option>
+            <option value="crime">Crime</option>
+            <option value="celltype">Cell Type</option>
+            <option value="judgment">Judgment</option>
+        </select>
+        <button id="addFilterBtn">Search</button><br><br>
+        <button id="multiWhereQueryBtn">Run Query</button>
     </div>
-    <hr>
-
-    <div>
-        <h2>Order + Limit</h2>
-        <label for="orderColumn">Order by:</label>
-        <input type="text" id="orderColumn" placeholder="price"><br><br>
-
-        <label for="orderDir">Direction:</label>
-        <select id="orderDir">
-            <option value="asc">Asc</option>
-            <option value="desc">Desc</option>
-        </select><br><br>
-
-        <label for="limitNum">Limit:</label>
-        <input type="number" id="limitNum" value="5"><br><br>
-
-        <button id="orderLimitQueryBtn">Run Order + Limit Query</button>
+    <div id="infor">
     </div>
-
-    <hr>
-
+    <br>
+    <div>
+        <h1>Combined Queries</h1>
+        <h2>Cell type < 62 and individual cell type</h2>
+        <button id="getCellNumAndCellType">Run</button>
+        <br>
+        <h2>Crime = Robo and Judgment = Culpable</h2>
+        <button id="getCrimeAndJudgment">Run</button>
+    </div>
+    <br>
+    <div>
+        <h2>Simple query</h2>
+        <input type="text" placeholder="Column" class="filterColumn">
+        <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
+        <input type="text" placeholder="Value" class="filterValue">
+        <button id="whereQueryBtn">Run query</button>
+    </div>
+    <br>
     <div>
         <h2>Prefix Search</h2>
         <label for="prefixColumn">Column:</label>
@@ -52,9 +58,7 @@
 
         <button id="prefixQueryBtn">Run Prefix Search</button>
     </div>
-
-    <hr>
-
+    <br>
     <div>
         <h2>Results</h2>
         <pre id="results"></pre>
@@ -63,37 +67,103 @@
     <script type="module">
         import { FirestoreQuery } from './modules/firestore_query.js';
 
-        const firestore = new FirestoreQuery("2025-I");
+        const firestore = new FirestoreQuery("/jail/jailId/prisioner/");
 
         const displayResults = (docs) => {
+
             const resultsEl = document.getElementById("results");
+
             if (!docs || docs.length === 0) {
                 resultsEl.textContent = "No documents found.";
                 return;
             }
 
-            resultsEl.textContent = JSON.stringify(docs, null, 2);
+            docs.forEach(doc => {
+                let formattedData = `
+            <p><strong>Name:</strong> ${doc.name}</p>
+            <p><strong>Last Name:</strong> ${doc.lastName}</p>
+            <p><strong>Birth date:</strong> ${doc.birthDate || "N/A"}</p>
+            <p><strong>Crime:</strong> ${doc.crime || "N/A"}</p>
+            <p><strong>Judgment:</strong> ${doc.judgment}</p>
+            <p><strong>Begging Date:</strong> ${doc.beggingDate}</p>
+            <p><strong>End Date:</strong> ${doc.endDate || "N/A"}</p>
+            <p><strong>Cell Number:</strong> ${doc.cellNumber || "N/A"}</p>
+            <p><strong>Cell Type:</strong> ${doc.cellType || "N/A"}</p>
+            <p><strong>Guard name:</strong> ${doc.guardName || "N/A"}</p>
+            <p><strong>Guard last name:</strong> ${doc.guardLastName || "N/A"}</p>
+            <p><strong>ID Guard:</strong> ${doc.idGuard || "N/A"}</p>
+            <p><strong>Guard work shift:</strong> ${doc.guardWorkShift || "N/A"}</p>
+            <hr>
+    `;
+                resultsEl.innerHTML += formattedData;
+            });
         };
 
         // Add fields to filter
         document.getElementById("addFilterBtn").addEventListener("click", () => {
             console.log("Add field clicked")
-            const container = document.getElementById("filtersContainer");
+            const container = document.getElementById("infor");
+            // Limpiar el contenido anterior
+            container.innerHTML = "";
             const div = document.createElement("div");
             div.classList.add("filter");
-
-            div.innerHTML = `
-                <input type="text" placeholder="Column" class="filterColumn">
+            const optionValue = document.getElementById("option1").value.trim();
+            console.log(optionValue)
+            if (optionValue == "cell") {
+                div.innerHTML = `
+                <h2>Cell Number</h2>
+                <input type="text" placeholder="input: cellNumber" class="filterColumn">
                 <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
                 <input type="text" placeholder="Value" class="filterValue">
                 `;
+            } else if (optionValue == "crime") {
+                div.innerHTML = `
+                <h2>Crime</h2>
+                <input type="text" placeholder="input: crime" class="filterColumn">
+                <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
+                <select class="filterValue">
+                    <option value="Robo">Robo</option>
+                    <option value="Asesinato">Asesinato</option>
+                    <option value="Tráfico">Tráfico</option>
+                    <option value="Estafa">Estafa</option>
+                    <option value="Secuestro">Secuestro</option>
+                    <option value="Homicidio">Homicidio</option>
+                    <option value="Contrabando">Contrabando</option>
+                </select>
+                <br>
+                `;
 
+            } else if (optionValue == "celltype") {
+                div.innerHTML = `
+                <h2>Cell Type</h2>
+                <input type="text" placeholder="input: cellType" class="filterColumn">
+                <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
+                <select class="filterValue">
+                    <option value="Individual">Individual</option>
+                    <option value="Compartida">Compartida</option>
+                    <option value="Aislada">Aislada</option>
+                </select>
+                <br>
+                `;
+            } else if (optionValue == "judgment") {
+                div.innerHTML = `
+                <h2>Judgment</h2>
+                <input type="text" placeholder="input: judgment" class="filterColumn">
+                <input type="text" placeholder="Comparator (==, >, <, etc)" class="filterComparator">
+                <select class="filterValue">
+                    <option value="Culpable">Culpable</option>
+                    <option value="Inocente">Inocente</option>
+                    <option value="En juicio">En juicio</option>
+                </select>
+                <br>
+                `;
+            }
             container.appendChild(div);
         });
 
         // Multi query
         document.getElementById("multiWhereQueryBtn").addEventListener("click", async () => {
-            const filterDivs = document.querySelectorAll("#filtersContainer .filter");
+            const filterDivs = document.querySelectorAll("#infor .filter");
             const filters = [];
 
             filterDivs.forEach(div => {
@@ -111,13 +181,18 @@
             displayResults(docs);
         });
 
-        // Order + Limit Query
-        document.getElementById("orderLimitQueryBtn").addEventListener("click", async () => {
-            const column = document.getElementById("orderColumn").value.trim();
-            const direction = document.getElementById("orderDir").value;
-            const limitNum = parseInt(document.getElementById("limitNum").value, 10);
+        document.getElementById("whereQueryBtn").addEventListener("click", async () => {
+            const column = document.querySelector(".filterColumn").value.trim();
+            const comparator = document.querySelector(".filterComparator").value.trim();
+            const valueRaw = document.querySelector(".filterValue").value.trim();
 
-            const docs = await firestore.combinedQuery([], { column, direction }, limitNum);
+            if (!column || !comparator || !valueRaw) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            const value = isNaN(valueRaw) ? valueRaw : Number(valueRaw);
+            const docs = await firestore.whereQuery(column, comparator, value);
             displayResults(docs);
         });
 
@@ -129,6 +204,17 @@
             const docs = await firestore.prefixSearch(column, prefix);
             displayResults(docs);
         });
+
+        document.getElementById("getCellNumAndCellType").addEventListener("click", async () => {
+            const docs = await firestore.getCellNumAndCellType();
+            displayResults(docs);
+        });
+
+        document.getElementById("getCrimeAndJudgment").addEventListener("click", async () => {
+            const docs = await firestore.getCrimeAndJudgment();
+            displayResults(docs);
+        });
+
     </script>
 </body>
 

@@ -3,11 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Firebase Web</title>
+    <link href="CSS/style.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+    <title>Jail firebase</title>
 </head>
 
 <body>
-    <a href="queries.html"> Query</a>
+    <div>
+        <h1>For Queries:</h1>
+        <a href="queries.html"> Queries</a>
+    </div>
     <div>
         <h1>Connected to Firestore</h1>
         <button id="loadDataBtn">Show all documents in console</button>
@@ -25,39 +32,59 @@
         <label for="lastName">Last Name:</label>
         <input type="text" id="lastName" placeholder="Ej: Reyes"><br><br>
 
-        <label for="birthDate">birthDate:</label>
+        <label for="birthDate">Birth date:</label>
         <input type="text" id="birthDate" placeholder="Ej: 07 de septiembre de 2004"><br><br>
 
-        <label for="crime">crime:</label>
-        <input type="text" id="crime" placeholder="Ej: Hurto"><br><br>
+        <label for="crime">Crime:</label>
+        <select id="crime">
+            <option value="Robo">Robo</option>
+            <option value="Asesinato">Asesinato</option>
+            <option value="Tráfico">Tráfico</option>
+            <option value="Estafa">Estafa</option>
+            <option value="Secuestro">Secuestro</option>
+            <option value="Homicidio">Homicidio</option>
+            <option value="Contrabando">Contrabando</option>
+        </select>
+        <br>    
+        <br>
+        <label for="judgment">Judgment:</label>
+        <select id="judgment">
+            <option value="Culpable">Culpable</option>
+            <option value="En juicio">En juicio</option>
+        </select><br><br>
 
-        <label for="judgment">judgment:</label>
-        <input type="text" id="judgment" placeholder="Ej: 5 años"><br><br>
-
-        <label for="beggingDate">beggingDate:</label>
+        <label for="BeggingDate">Beggining Date:</label>
         <input type="text" id="beggingDate" placeholder="Ej: 18 de abril de 2020"><br><br>
 
-        <label for="endDate">endDate:</label>
+        <label for="endDate">End Date:</label>
         <input type="text" id="endDate" placeholder="Ej: 18 de abril de 2025"><br><br>
 
-        <label for="cellNumber">cellNumber:</label>
+        <label for="cellNumber">Cell Number:</label>
         <input type="number" id="cellNumber" placeholder="Ej: 10"><br><br>
 
-        <label for="cellType">cellType:</label>
-        <input type="text" id="cellType" placeholder="Ej: Máxima de seguridad"><br><br>
+        <label for="cellType">Cell type:</label>
+        <select id="cellType">
+            <option value="Individual">Individual</option>
+            <option value="Compartida">Compartida</option>
+            <option value="Aislada">Aislada</option>
+        </select><br><br>
 
-        <label for="guardName">guardName:</label>
+        <label for="guardName">Guard Name:</label>
         <input type="text" id="guardName" placeholder="Ej: Luis"><br><br>
 
-        <label for="guardLastName">guardLastName:</label>
+        <label for="guardLastName">Guard Last Name:</label>
         <input type="text" id="guardLastName" placeholder="Ej: Castro"><br><br>
 
-        <label for="idGuard">idGuard:</label>
+        <label for="idGuard">ID Guard:</label>
         <input type="number" id="idGuard" placeholder="Ej: 22"><br><br>
 
-        <label for="guardWorkShift">guardWorkShift:</label>
+        <label for="guardWorkShift">Guard Work Shift:</label>
         <input type="text" id="guardWorkShift" placeholder="Ej: Diurno"><br><br>
-
+        <select id="guardWorkShift">
+            <option value="Mañana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noche">Noche</option>
+        </select><br><br>
 
 
         <button id="addDocBtn">Add Prisioner</button>
@@ -65,10 +92,16 @@
     <div>
         <h1>Get prisioner by id</h1>
 
-        <label for="getDocId">prisioner ID:</label>
+        <label for="getDocId">Prisioner ID:</label>
         <input type="text" id="getDocId" placeholder="Ej: 30003625"><br><br>
 
         <button id="getDocBtn">Get Student</button>
+    </div>
+
+    <div>
+        <h1>Insertar 200 prisioneros</h1>
+        <button id="insertarPrisioneros">Cargar datos</button>
+
     </div>
 
     <script type="module">
@@ -98,9 +131,9 @@
             const idGuardValue = document.getElementById("idGuard").value;
             const idGuard = idGuardValue ? parseInt(idGuardValue) : null;
             const guardWorkShift = document.getElementById("guardWorkShift").value.trim();
-            
-            
-            if (!docId || !name || !lastName || !judgment || !cellNumber || !beggingDate || !endDate ) {
+
+
+            if (!docId || !name || !lastName || !judgment || !cellNumber || !beggingDate || !endDate) {
                 alert("Fill in the required fields: Document ID, First Name and Last Name.");
                 return;
             }
@@ -109,7 +142,7 @@
                 name,
                 lastName,
                 birthDate,
-                crime, 
+                crime,
                 judgment,
                 beggingDate,
                 endDate,

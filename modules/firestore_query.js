@@ -56,6 +56,24 @@ export class FirestoreQuery {
         return this.runQuery(q);
     }
 
+    async getCellNumAndCellType() {
+        const q = query(
+            this.collectionRef,
+            where("cellNumber", "<", 62),
+            where("cellType","==", "Individual"),
+        );
+        return this.runQuery(q);
+    }
+
+    async getCrimeAndJudgment() {
+        const q = query(
+            this.collectionRef,
+            where("crime", "==", "Robo"),
+            where("judgment","==", "Culpable"),
+        );
+        return this.runQuery(q);
+    }
+
     async runQuery(q) {
         const snapshot = await getDocs(q);
 
