@@ -1,0 +1,8 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyAse0mNoon_2LvTW5Ut_aCsAQ0Q9RHYoMM",
+  authDomain: "jaildb.firebaseapp.com",
+  projectId: "jaildb",
+  storageBucket: "jaildb.firebasestorage.app",
+  messagingSenderId: "518676198034",
+  appId: "1:518676198034:web:81d4fe1ed2994759e16c4b"
+};
