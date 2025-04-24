@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Web</title>
+</head>
+
+<body>
+    <a href="queries.html"> Query</a>
+    <div>
+        <h1>Connected to Firestore</h1>
+        <button id="loadDataBtn">Show all documents in console</button>
+    </div>
+
+    <div>
+        <h1>Add prisioner to the database</h1>
+
+        <label for="docId">Prisioner ID:</label>
+        <input type="text" id="docId" placeholder="Ej: 30003625"><br><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Ej: Sergio"><br><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" placeholder="Ej: Reyes"><br><br>
+
+        <label for="birthDate">birthDate:</label>
+        <input type="text" id="birthDate" placeholder="Ej: 07 de septiembre de 2004"><br><br>
+
+        <label for="crime">crime:</label>
+        <input type="text" id="crime" placeholder="Ej: Hurto"><br><br>
+
+        <label for="judgment">judgment:</label>
+        <input type="text" id="judgment" placeholder="Ej: 5 años"><br><br>
+
+        <label for="beggingDate">beggingDate:</label>
+        <input type="text" id="beggingDate" placeholder="Ej: 18 de abril de 2020"><br><br>
+
+        <label for="endDate">endDate:</label>
+        <input type="text" id="endDate" placeholder="Ej: 18 de abril de 2025"><br><br>
+
+        <label for="cellNumber">cellNumber:</label>
+        <input type="number" id="cellNumber" placeholder="Ej: 10"><br><br>
+
+        <label for="cellType">cellType:</label>
+        <input type="text" id="cellType" placeholder="Ej: Máxima de seguridad"><br><br>
+
+        <label for="guardName">guardName:</label>
+        <input type="text" id="guardName" placeholder="Ej: Luis"><br><br>
+
+        <label for="guardLastName">guardLastName:</label>
+        <input type="text" id="guardLastName" placeholder="Ej: Castro"><br><br>
+
+        <label for="idGuard">idGuard:</label>
+        <input type="number" id="idGuard" placeholder="Ej: 22"><br><br>
+
+        <label for="guardWorkShift">guardWorkShift:</label>
+        <input type="text" id="guardWorkShift" placeholder="Ej: Diurno"><br><br>
+
+
+
+        <button id="addDocBtn">Add Prisioner</button>
+    </div>
+    <div>
+        <h1>Get prisioner by id</h1>
+
+        <label for="getDocId">prisioner ID:</label>
+        <input type="text" id="getDocId" placeholder="Ej: 30003625"><br><br>
+
+        <button id="getDocBtn">Get Student</button>
+    </div>
+
+    <script type="module">
+        import { FirestoreService } from './modules/firestore_service.js';
+
+        const firestore = new FirestoreService("/jail/jailId/prisioner/");
+
+        document.getElementById("loadDataBtn").addEventListener("click", async () => {
+            const docs = await firestore.getAllDocuments();
+            console.log("Obtained Docs:", docs);
+        });
+
+        document.getElementById("addDocBtn").addEventListener("click", async () => {
+            const docId = document.getElementById("docId").value.trim();
+            const name = document.getElementById("name").value.trim();
+            const lastName = document.getElementById("lastName").value.trim();
+            const birthDate = document.getElementById("birthDate").value.trim();
+            const crime = document.getElementById("crime").value.trim();
+            const judgment = document.getElementById("judgment").value.trim();
+            const beggingDate = document.getElementById("beggingDate").value.trim();
+            const endDate = document.getElementById("endDate").value.trim();
+            const cellNumberValue = document.getElementById("cellNumber").value;
+            const cellNumber = cellNumberValue ? parseInt(cellNumberValue) : null;
+            const cellType = document.getElementById("cellType").value.trim();
+            const guardName = document.getElementById("guardName").value.trim();
+            const guardLastName = document.getElementById("guardLastName").value.trim();
+            const idGuardValue = document.getElementById("idGuard").value;
+            const idGuard = idGuardValue ? parseInt(idGuardValue) : null;
+            const guardWorkShift = document.getElementById("guardWorkShift").value.trim();
+            
+            
+            if (!docId || !name || !lastName || !judgment || !cellNumber || !beggingDate || !endDate ) {
+                alert("Fill in the required fields: Document ID, First Name and Last Name.");
+                return;
+            }
+
+            const data = {
+                name,
+                lastName,
+                birthDate,
+                crime, 
+                judgment,
+                beggingDate,
+                endDate,
+                cellNumber: isNaN(cellNumber) ? null : cellNumber,
+                cellType,
+                guardName,
+                guardLastName,
+                idGuard: isNaN(idGuard) ? null : idGuard,
+                guardWorkShift
+            };
+
+            await firestore.PostDocument(docId, data);
+        });
+
+        document.getElementById("getDocBtn").addEventListener("click", async () => {
+            const docId = document.getElementById("getDocId").value.trim();
+
+            if (!docId) {
+                alert("The student id is needed");
+                return;
+            }
+            const doc = await firestore.getDocumentById(docId);
+            console.log(doc);
+        });
+    </script>
+</body>
+
+</html>
